@@ -10,7 +10,7 @@ industry_groups = {
     'Automobile Germany': ['VOW3.DE', 'BMW.DE'],
 }
 
-# Sample time frames (expand as needed)
+# Sample time frames
 time_frames = [
     ("2010-01-01", "2015-01-01"),
     ("2015-01-01", "2020-01-01")

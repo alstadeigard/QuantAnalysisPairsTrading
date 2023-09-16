@@ -1,72 +1,82 @@
-import statsmodels.api as sm
-import numpy as np
 import pandas as pd
+import statsmodels.api as sm
 
 
-def compute_spread(stock1_prices, stock2_prices):
+def compute_spread(stock1_data: pd.DataFrame, stock2_data: pd.DataFrame) -> pd.Series:
     """
-    Compute the spread using the Engle-Granger two-step method.
-    Returns the spread, which are the residuals of the regression.
+    Computes the spread between two stocks based on a linear regression.
+
+    Inputs(2):
+    - stock1_data (pd.DataFrame): Dataframe with 'Adj Close' column for stock 1.
+    - stock2_data (pd.DataFrame): Dataframe with 'Adj Close' column for stock 2.
+    Outputs(1):
+    - pd.Series: The spread between the two stocks.
     """
 
-    X = sm.add_constant(stock2_prices)
-    model = sm.OLS(stock1_prices, X).fit()
-    spread = stock1_prices - model.predict(X)
-
+    stock1_data = sm.add_constant(stock1_data)
+    model = sm.OLS(stock2_data, stock1_data).fit()
+    spread = stock2_data['Adj Close'] - (model.params[1] * stock1_data['Adj Close'] + model.params[0])
     return spread
 
 
-def calculate_z_score(spread):
+def compute_z_score(spread: pd.Series) -> pd.Series:
     """
-    Calculate the Z-Score of the spread.
-    """
-    mean_spread = spread.mean()
-    std_spread = spread.std()
-    z_score = (spread - mean_spread) / std_spread
+    Computes the Z-score for the given spread.
 
-    return z_score
-
-
-def generate_signals(z_score, lower_threshold=-1.5, upper_threshold=1.5):
-    """
-    Generate trading signals based on Z-Score.
-    Returns a DataFrame with columns: 'longs', 'shorts', 'exits'
+    Inputs(1):
+    - spread (pd.Series): Spread values.
+    Outputs(1):
+    - pd.Series: The Z-score for the spread.
     """
 
-    longs = z_score < lower_threshold
-    shorts = z_score > upper_threshold
-    exits = np.abs(z_score) < 0.5
-
-    signals = {
-        'longs': longs,
-        'shorts': shorts,
-        'exits': exits
-    }
-
-    return pd.DataFrame(signals)
+    return (spread - spread.mean()) / spread.std()
 
 
-def calculate_daily_returns(stock_data):
+def generate_trading_signals(z_score: pd.Series, threshold: float) -> dict:
     """
-    Calculate the daily returns of a stock.
+    Generates trading signals based on z-score and given threshold.
+
+    Inputs(2):
+    - z_score (pd.Series): The Z-score values.
+    - threshold (float): Threshold for generating signals.
+    Outputs(1):
+    - dict: Dictionary containing boolean values for 'long_entry', 'short_entry', 'long_exit', and 'short_exit'.
     """
-    return stock_data.pct_change().dropna()
+
+    signals = {}
+    signals['long_entry'] = z_score < -threshold
+    signals['short_entry'] = z_score > threshold
+    signals['long_exit'] = z_score >= -0.5
+    signals['short_exit'] = z_score <= 0.5
+    return signals
 
 
-def compute_strategy_returns(stock1_returns, stock2_returns, signals):
+def compute_strategy_returns(stock1_returns: pd.Series, stock2_returns: pd.Series, signals: dict) -> pd.Series:
     """
-    Compute the daily strategy returns.
+    Computes the cumulative strategy returns based on provided signals and returns.
+
+    Inputs(3):
+    - stock1_returns (pd.Series): Daily returns for stock 1.
+    - stock2_returns (pd.Series): Daily returns for stock 2.
+    - signals (dict): Dictionary containing trading signals.
+    Outputs(1):
+    - pd.Series: Cumulative strategy returns.
     """
-    strategy_returns = signals['longs'].shift() * (stock2_returns - stock1_returns) - signals['shorts'].shift() * (
-            stock2_returns - stock1_returns)
 
-    return strategy_returns
-
-
-def compute_cumulative_returns(strategy_returns):
-    """
-    Compute the cumulative returns of the strategy.
-    """
-    cumulative_strategy_returns = (1 + strategy_returns).cumprod()
-
+    returns = stock1_returns - stock2_returns
+    strategy = returns * signals['long_entry'].shift().fillna(0) - returns * signals['short_entry'].shift().fillna(0)
+    cumulative_strategy_returns = (1 + strategy).cumprod()
     return cumulative_strategy_returns
+
+
+def calculate_total_returns(cumulative_returns: pd.Series) -> float:
+    """
+    Calculate total returns based on the cumulative returns.
+
+    Inputs(1):
+    - cumulative_returns (pd.Series): Cumulative strategy returns.
+    Outputs(1):
+    - float: Total returns as a proportion.
+    """
+
+    return cumulative_returns.iloc[-1] - 1

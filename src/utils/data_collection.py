@@ -15,4 +15,4 @@ def fetch_data(ticker: str, start_date: str, end_date: str) -> pandas.DataFrame:
     """
 
     stock_data = yf.download(ticker, start=start_date, end=end_date)
-    return stock_data['Adj Close']
+    return stock_data[['Adj Close']]

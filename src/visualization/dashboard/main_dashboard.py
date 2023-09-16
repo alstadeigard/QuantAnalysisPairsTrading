@@ -3,15 +3,14 @@ from dash import dcc
 from dash import html
 from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
-import pandas as pd
-from src.main import backtest_pairs_trading
+from src.trading.pairs_trading import backtest_pairs_trading
 
 external_stylesheets = ['https://fonts.googleapis.com/css2?family=Roboto:wght@300;400&display=swap']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
 app.layout = html.Div([
-    html.H1("Stock Comparison Dashboard", style={'color': '#000000', 'text-align': 'center'}),
+    html.H1("Pairs Trading Analysis Dashboard", style={'color': '#000000', 'text-align': 'center'}),
 
     html.Div([
         html.Div("Input Parameters", style={'font-weight': 'bold', 'font-size': '20px', 'margin-bottom': '10px',

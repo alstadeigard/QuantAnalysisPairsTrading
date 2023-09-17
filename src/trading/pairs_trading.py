@@ -5,8 +5,6 @@ from src.utils.trading_strategy_utils import compute_spread, compute_z_score, ge
     compute_strategy_returns, calculate_total_returns
 from src.utils.risk_assessment_utils import calculate_sharpe_ratio, calculate_max_drawdown
 
-import pandas as pd
-
 
 def backtest_pairs_trading(stock1_ticker: str, stock2_ticker: str, start_date: str, end_date: str,
                            z_score_threshold: float) -> tuple:

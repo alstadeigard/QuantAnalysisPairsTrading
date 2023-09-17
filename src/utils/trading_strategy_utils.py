@@ -51,20 +51,24 @@ def generate_trading_signals(z_score: pd.Series, threshold: float) -> dict:
     return signals
 
 
-def compute_strategy_returns(stock1_returns: pd.Series, stock2_returns: pd.Series, signals: dict) -> pd.Series:
+def compute_strategy_returns(stock1_returns: pd.DataFrame, stock2_returns: pd.DataFrame, signals: dict) -> pd.Series:
     """
     Computes the cumulative strategy returns based on provided signals and returns.
 
     Inputs(3):
-    - stock1_returns (pd.Series): Daily returns for stock 1.
-    - stock2_returns (pd.Series): Daily returns for stock 2.
+    - stock1_returns (pd.DataFrame): DataFrame containing daily returns for stock 1.
+    - stock2_returns (pd.DataFrame): DataFrame containing daily returns for stock 2.
     - signals (dict): Dictionary containing trading signals.
     Outputs(1):
     - pd.Series: Cumulative strategy returns.
     """
 
-    returns = stock1_returns - stock2_returns
+    # Use the 'Adj Close' column for calculations (or another appropriate column name if it's different)
+    returns = stock1_returns['Adj Close'] - stock2_returns['Adj Close']
+
+    # Assuming signals are still Series and not part of a DataFrame
     strategy = returns * signals['long_entry'].shift().fillna(0) - returns * signals['short_entry'].shift().fillna(0)
+
     cumulative_strategy_returns = (1 + strategy).cumprod()
     return cumulative_strategy_returns
 

@@ -32,7 +32,7 @@ app.layout = html.Div([
         dcc.DatePickerSingle(id='end-date', date='2023-01-01',
                              style={'color': '#000000', 'width': '100%', 'margin-bottom': '10px'}),
 
-        html.Label("Z-Score:"),
+        html.Label("Z-Score Threshold:"),
         dcc.Input(id='z-score', type='number', value=1.0,
                   style={'color': '#000000', 'width': '100%', 'padding': '10px', 'margin-bottom': '15px'}),
 

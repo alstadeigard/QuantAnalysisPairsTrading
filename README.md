@@ -26,7 +26,7 @@ Disclaimer: This is a learning project, not a complete system. This project is m
 
 ## Setup & Installation
 
-Note: These run instructions will be replaced with a proper run-mechanism.
+Note: These run instructions will be replaced with a proper run-mechanism, this is a work-around that should work for now. If not feel free to contact me: alstadeigard@gmail.com
 
 1. Clone the repository.
 2. Navigate to the repository directory in the terminal and set up a virtual environment:  

@@ -26,15 +26,18 @@ Disclaimer: This is a learning project, not a complete system. This project is m
 
 ## Setup & Installation
 
+Note: These run instructions will be replaced with a proper run-mechanism.
+
 1. Clone the repository.
-2. Navigate to the repository directory and set up a virtual environment:
-`cd QuantPairsTrading`
-`python -m venv venv`
+2. Navigate to the repository directory in the terminal and set up a virtual environment:  
+`cd QuantPairsTrading`  
+`python -m venv venv`  
 `source venv/bin/activate` or `venv\Scripts\activate` on Windows
-2. Install dependencies
+2. Install dependencies  
 `pip install -r requirements.txt`
-3. Run main_dashboard.py
-`$env:PYTHONPATH="PathToQuantAnalysisPairsTrading"`
+3. Run main_dashboard.py  
+The easiest way is through an IDE like PyCharm. To run it through the terminal:  
+`$env:PYTHONPATH="PathToQuantAnalysisPairsTrading"` (Insert the path to the QuantAnalysisPairsTrading directory on your machine, this is a work-around for now, a proper run-mechanism will be added)  
 `python src\visualization\dashboard\main_dashboard.py`
 
 
